@@ -40,7 +40,7 @@ class IdleState:
 
         self.player.pos = x, y
 
-        frame = self.time * 15
+        frame = self.time * (self.player.speed_move * 0.1)
         self.fidx = int(frame) % 8
 
     def updateDelta(self, ddx, ddy):
@@ -63,7 +63,7 @@ class IdleState:
             self.player.updateDelta(*Player.KEYDOWN_MAP[pair])
         elif pair in Player.KEYUP_MAP:
             self.player.updateDelta(*Player.KEYUP_MAP[pair])
-        elif pair == Player.KEYDOWN_z:
+        elif pair == Player.KEYDOWN_x:
             self.player.set_state(AttackState)
 
 class AttackState:
@@ -99,7 +99,14 @@ class AttackState:
 
     def update(self):
         self.time += gfw.delta_time
-        frame = self.time * 15
+        frame = self.time * self.player.speed_atk
+
+        dx, dy = self.player.delta
+        x, y = self.player.pos
+        x += self.player.dir * (self.player.speed_move * 0.02) * gfw.delta_time
+        y += dy * (self.player.speed_move * 0.2) * gfw.delta_time
+
+        self.player.pos = x, y
 
         if frame < 6:
             self.fidx = int(frame)
@@ -130,7 +137,7 @@ class AttackState:
             self.player.updateDelta(*Player.KEYDOWN_MAP[pair])
         elif pair in Player.KEYUP_MAP:
             self.player.updateDelta(*Player.KEYUP_MAP[pair])
-        elif pair == Player.KEYDOWN_z:
+        elif pair == Player.KEYDOWN_x:
             self.comboswitch += 1
 
 
@@ -156,7 +163,9 @@ class Player:
         self.image_idle = gfw.image.load('res/char_01.png')
         self.image_attack = gfw.image.load('res/char_01_atk.png')
         self.image_die = gfw.image.load('res/char_01_die.png')
-        self.speed_move = 100
+        self.speed_move = 100 #이동속도
+        self.speed_atk = 10 #공격속도
+        self.power = 10 #공격력
         self.time = 0
         self.fidx = 0
         self.action = 6

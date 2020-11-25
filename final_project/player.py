@@ -40,7 +40,7 @@ class IdleState:
 
         self.player.pos = x, y
 
-        frame = self.time * (self.player.speed_move * 0.1)
+        frame = self.time * 8#(self.player.speed_move * 0.1)
         self.fidx = int(frame) % 8
 
     def updateDelta(self, ddx, ddy):
@@ -65,6 +65,8 @@ class IdleState:
             self.player.updateDelta(*Player.KEYUP_MAP[pair])
         elif pair == Player.KEYDOWN_x:
             self.player.set_state(AttackState)
+        elif pair == Player.KEYDOWN_z:
+            self.player.set_state(DashState)
 
 class AttackState:
     @staticmethod
@@ -100,10 +102,11 @@ class AttackState:
     def update(self):
         self.time += gfw.delta_time
         frame = self.time * self.player.speed_atk
+        move_speed = max(0, 25 - (frame ** 2))
 
         dx, dy = self.player.delta
         x, y = self.player.pos
-        x += self.player.dir * (self.player.speed_move * 0.02) * gfw.delta_time
+        x += self.player.dir * (self.player.speed_move * (0.02 * move_speed)) * gfw.delta_time
         y += dy * (self.player.speed_move * 0.2) * gfw.delta_time
 
         self.player.pos = x, y
@@ -140,6 +143,70 @@ class AttackState:
         elif pair == Player.KEYDOWN_x:
             self.comboswitch += 1
 
+class DashState:
+    def get(player):
+        if not hasattr(DashState, 'singleton'):
+            DashState.singleton = DashState()
+            DashState.singleton.player = player
+        return DashState.singleton
+
+    def __init__(self):
+        self.image_idle = gfw.image.load('res/char_01.png')
+
+    def enter(self):
+        self.time = 0
+        self.fidx = 0
+
+    def exit(self):
+        pass
+
+    def draw(self):
+        if self.player.dir == -1:
+            dash_dir = 1
+        else:
+            dash_dir = 2
+
+        x = self.fidx * 64
+        y = dash_dir * 64
+        self.image_idle.clip_draw(x, y, 64, 64, *self.player.pos)
+
+    def update(self):
+        self.time += gfw.delta_time
+        frame = self.time * 10#(self.player.speed_move * 0.1)
+
+        self.fidx = int(frame) % 8
+        dash_speed = max(0, 150 - ((frame - 3) ** 4))
+
+        x, y = self.player.pos
+        x += self.player.dir * (self.player.speed_move * round(0.02 * dash_speed)) * gfw.delta_time
+
+        self.player.pos = x, y
+
+        if frame < 9:
+            self.fidx = int(frame) % 8
+        else:
+            self.player.set_state(IdleState)
+
+    def updateDelta(self, ddx, ddy):
+        dx, dy = self.player.delta
+        dx += ddx
+        dy += ddy
+        if ddx != 0:
+            self.player.updateAction(dx, ddx)
+        self.player.delta = dx, dy
+
+    def updateAction(self, dx, ddx):
+        self.player.action = \
+            3 if dx < 0 else \
+            4 if dx > 0 else \
+            5 if ddx > 0 else 6
+
+    def handle_event(self, e):
+        pair = (e.type, e.key)
+        if pair in Player.KEYDOWN_MAP:
+            self.player.updateDelta(*Player.KEYDOWN_MAP[pair])
+        elif pair in Player.KEYUP_MAP:
+            self.player.updateDelta(*Player.KEYUP_MAP[pair])
 
 class Player:
     KEYDOWN_MAP = {
@@ -171,7 +238,7 @@ class Player:
         self.action = 6
         self.action_atk = 7
         self.combo = 0
-        self.dir = 0
+        self.dir = 1
         self.delta = 0, 0
         self.state = None
         self.set_state(IdleState)

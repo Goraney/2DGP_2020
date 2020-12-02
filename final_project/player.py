@@ -1,6 +1,67 @@
 from pico2d import *
 import gfw
 
+class Player:
+    KEY_MAP = {
+        (SDL_KEYDOWN, SDLK_LEFT):   (-1,  0),
+        (SDL_KEYDOWN, SDLK_RIGHT):  ( 1,  0),
+        (SDL_KEYDOWN, SDLK_DOWN):   ( 0, -1),
+        (SDL_KEYDOWN, SDLK_UP):     ( 0,  1),
+        (SDL_KEYUP, SDLK_LEFT):     ( 1,  0),
+        (SDL_KEYUP, SDLK_RIGHT):    (-1,  0),
+        (SDL_KEYUP, SDLK_DOWN):     ( 0,  1),
+        (SDL_KEYUP, SDLK_UP):       ( 0, -1),
+    }
+    KEYDOWN_z = (SDL_KEYDOWN, SDLK_z)
+    KEYDOWN_x = (SDL_KEYDOWN, SDLK_x)
+    KEY_SKILL_MAP = {
+        (SDL_KEYDOWN, SDLK_a),
+        (SDL_KEYDOWN, SDLK_s),
+        (SDL_KEYDOWN, SDLK_d)
+    }
+    image = None
+
+    def __init__(self):
+        self.pos = get_canvas_width() // 2, get_canvas_height() // 2
+        self.image_idle = gfw.image.load('res/char_01.png')
+        self.image_attack = gfw.image.load('res/char_01_atk.png')
+        self.image_die = gfw.image.load('res/char_01_die.png')
+        self.image_skill = gfw.image.load('res/char_01_skill.png')
+        self.speed_move = 100 #이동속도
+        self.speed_atk = 10 #공격속도
+        self.power = 10 #공격력
+        self.time = 0
+        self.fidx = 0
+        self.action = 6
+        self.action_atk = 7
+        self.combo = 0
+        self.dir = 1
+        self.delta = 0, 0
+        self.state = None
+        self.set_state(IdleState)
+
+    def set_state(self, clazz):
+        if self.state != None:
+            self.state.exit()
+        self.state = clazz.get(self)
+        self.state.enter()
+
+    def draw(self):
+        self.state.draw()
+
+    def update(self):
+        self.state.update()
+
+    def updateDelta(self, ddx, ddy):
+        self.state.updateDelta(ddx, ddy)
+
+    def updateAction(self, dx, ddx, dy):
+        self.state.updateAction(dx, ddx, dy)
+
+    def handle_event(self, e):
+        self.state.handle_event(e)
+
+
 class IdleState:
     @staticmethod
     def get(player):
@@ -48,25 +109,57 @@ class IdleState:
         dx += ddx
         dy += ddy
         if ddx != 0:
-            self.player.updateAction(dx, ddx)
+            self.player.updateAction(dx, ddx, dy)
+        elif ddy != 0:
+            if self.player.dir < 0:
+                if dy != 0:
+                    self.player.action = 3
+                elif ddy != 0:
+                    self.player.updateAction(dx, ddx, dy)
+                else:
+                    self.player.updateAction(dx, ddx, dy)
+            elif self.player.dir > 0:
+                if dy != 0:
+                    self.player.action = 4
+                elif ddy != 0:
+                    self.player.updateAction(dx, ddx, dy)
+                else:
+                    self.player.updateAction(dx, ddx, dy)
+
         self.player.delta = dx, dy
 
-    def updateAction(self, dx, ddx):
-        self.player.action = \
-            3 if dx < 0 else \
-            4 if dx > 0 else \
-            5 if ddx > 0 else 6
+    def updateAction(self, dx, ddx, dy):
+        if dx < 0:
+            self.player.action = 3
+        elif dx > 0:
+            self.player.action = 4
+        elif ddx > 0:
+            if dy != 0:
+                self.player.action = 3
+            else:
+                self.player.action = 5
+        elif ddx == 0:
+            if self.player.dir < 0:
+                self.player.action = 5
+            else:
+                self.player.action = 6
+        else:
+            if dy != 0:
+                self.player.action = 4
+            else:
+                self.player.action = 6
 
     def handle_event(self, e):
         pair = (e.type, e.key)
-        if pair in Player.KEYDOWN_MAP:
-            self.player.updateDelta(*Player.KEYDOWN_MAP[pair])
-        elif pair in Player.KEYUP_MAP:
-            self.player.updateDelta(*Player.KEYUP_MAP[pair])
+        if pair in Player.KEY_MAP:
+            self.player.updateDelta(*Player.KEY_MAP[pair])
         elif pair == Player.KEYDOWN_x:
             self.player.set_state(AttackState)
         elif pair == Player.KEYDOWN_z:
             self.player.set_state(DashState)
+        elif pair in Player.KEY_SKILL_MAP:
+            self.player.set_state(SkillState)
+
 
 class AttackState:
     @staticmethod
@@ -125,21 +218,49 @@ class AttackState:
         dx += ddx
         dy += ddy
         if ddx != 0:
-            self.player.updateAction(dx, ddx)
+            self.player.updateAction(dx, ddx, dy)
+        elif ddy != 0:
+            if self.player.dir < 0:
+                if dy != 0:
+                    self.player.action = 3
+                elif ddy != 0:
+                    self.player.updateAction(dx, ddx, dy)
+                else:
+                    self.player.updateAction(dx, ddx, dy)
+            elif self.player.dir > 0:
+                if dy != 0:
+                    self.player.action = 4
+                elif ddy != 0:
+                    self.player.updateAction(dx, ddx, dy)
+                else:
+                    self.player.updateAction(dx, ddx, dy)
         self.player.delta = dx, dy
 
-    def updateAction(self, dx, ddx):
-        self.player.action = \
-            3 if dx < 0 else \
-            4 if dx > 0 else \
-            5 if ddx > 0 else 6
+    def updateAction(self, dx, ddx, dy):
+        if dx < 0:
+            self.player.action = 3
+        elif dx > 0:
+            self.player.action = 4
+        elif ddx > 0:
+            if dy != 0:
+                self.player.action = 3
+            else:
+                self.player.action = 5
+        elif ddx == 0:
+            if self.player.dir < 0:
+                self.player.action = 5
+            else:
+                self.player.action = 6
+        else:
+            if dy != 0:
+                self.player.action = 4
+            else:
+                self.player.action = 6
 
     def handle_event(self,e):
         pair = (e.type, e.key)
-        if pair in Player.KEYDOWN_MAP:
-            self.player.updateDelta(*Player.KEYDOWN_MAP[pair])
-        elif pair in Player.KEYUP_MAP:
-            self.player.updateDelta(*Player.KEYUP_MAP[pair])
+        if pair in Player.KEY_MAP:
+            self.player.updateDelta(*Player.KEY_MAP[pair])
         elif pair == Player.KEYDOWN_x:
             self.comboswitch += 1
 
@@ -192,74 +313,114 @@ class DashState:
         dx += ddx
         dy += ddy
         if ddx != 0:
-            self.player.updateAction(dx, ddx)
+            self.player.updateAction(dx, ddx, dy)
+        elif ddy != 0:
+            if self.player.dir < 0:
+                if dy != 0:
+                    self.player.action = 3
+                elif ddy != 0:
+                    self.player.updateAction(dx, ddx, dy)
+                else:
+                    self.player.updateAction(dx, ddx, dy)
+            elif self.player.dir > 0:
+                if dy != 0:
+                    self.player.action = 4
+                elif ddy != 0:
+                    self.player.updateAction(dx, ddx, dy)
+                else:
+                    self.player.updateAction(dx, ddx, dy)
         self.player.delta = dx, dy
 
-    def updateAction(self, dx, ddx):
-        self.player.action = \
-            3 if dx < 0 else \
-            4 if dx > 0 else \
-            5 if ddx > 0 else 6
+    def updateAction(self, dx, ddx, dy):
+        if dx < 0:
+            self.player.action = 3
+        elif dx > 0:
+            self.player.action = 4
+        elif ddx > 0:
+            if dy != 0:
+                self.player.action = 3
+            else:
+                self.player.action = 5
+        elif ddx == 0:
+            if self.player.dir < 0:
+                self.player.action = 5
+            else:
+                self.player.action = 6
+        else:
+            if dy != 0:
+                self.player.action = 4
+            else:
+                self.player.action = 6
 
     def handle_event(self, e):
         pair = (e.type, e.key)
-        if pair in Player.KEYDOWN_MAP:
-            self.player.updateDelta(*Player.KEYDOWN_MAP[pair])
-        elif pair in Player.KEYUP_MAP:
-            self.player.updateDelta(*Player.KEYUP_MAP[pair])
+        if pair in Player.KEY_MAP:
+            self.player.updateDelta(*Player.KEY_MAP[pair])
 
-class Player:
-    KEYDOWN_MAP = {
-        (SDL_KEYDOWN, SDLK_LEFT):   (-1,  0),
-        (SDL_KEYDOWN, SDLK_RIGHT):  ( 1,  0),
-        (SDL_KEYDOWN, SDLK_DOWN):   ( 0, -1),
-        (SDL_KEYDOWN, SDLK_UP):     ( 0,  1),
-    }
-    KEYUP_MAP = {
-        (SDL_KEYUP, SDLK_LEFT):     ( 1,  0),
-        (SDL_KEYUP, SDLK_RIGHT):    (-1,  0),
-        (SDL_KEYUP, SDLK_DOWN):     ( 0,  1),
-        (SDL_KEYUP, SDLK_UP):       ( 0, -1),
-    }
-    KEYDOWN_z = (SDL_KEYDOWN, SDLK_z)
-    KEYDOWN_x = (SDL_KEYDOWN, SDLK_x)
-    image = None
+class SkillState:
+    @staticmethod
+    def get(player):
+        if not hasattr(SkillState, 'singleton'):
+            SkillState.singleton = SkillState()
+            SkillState.singleton.player = player
+        return SkillState.singleton
 
     def __init__(self):
-        self.pos = get_canvas_width() // 2, get_canvas_height() // 2
-        self.image_idle = gfw.image.load('res/char_01.png')
-        self.image_attack = gfw.image.load('res/char_01_atk.png')
-        self.image_die = gfw.image.load('res/char_01_die.png')
-        self.speed_move = 100 #이동속도
-        self.speed_atk = 10 #공격속도
-        self.power = 10 #공격력
-        self.time = 0
-        self.fidx = 0
-        self.action = 6
-        self.action_atk = 7
-        self.combo = 0
-        self.dir = 1
-        self.delta = 0, 0
-        self.state = None
-        self.set_state(IdleState)
+        self.image_attack = gfw.image.load('res/char_01_skill.png')
 
-    def set_state(self, clazz):
-        if self.state != None:
-            self.state.exit()
-        self.state = clazz.get(self)
-        self.state.enter()
+    def enter(self):
+        pass
+
+    def exit(self):
+        pass
 
     def draw(self):
-        self.state.draw()
+        pass
 
     def update(self):
-        self.state.update()
+        pass
 
     def updateDelta(self, ddx, ddy):
-        self.state.updateDelta(ddx, ddy)
+        dx, dy = self.player.delta
+        dx += ddx
+        dy += ddy
+        if ddx != 0:
+            self.player.updateAction(dx, ddx, dy)
+        elif ddy != 0:
+            if self.player.dir < 0:
+                if dy != 0:
+                    self.player.action = 3
+                elif ddy != 0:
+                    self.player.updateAction(dx, ddx, dy)
+                else:
+                    self.player.updateAction(dx, ddx, dy)
+            elif self.player.dir > 0:
+                if dy != 0:
+                    self.player.action = 4
+                elif ddy != 0:
+                    self.player.updateAction(dx, ddx, dy)
+                else:
+                    self.player.updateAction(dx, ddx, dy)
 
-    def updateAction(self, dx, ddx):
-        self.state.updateAction(dx, ddx)
+        self.player.delta = dx, dy
 
-    def handle_event(self, e):
-        self.state.handle_event(e)
+    def updateAction(self, dx, ddx, dy):
+        if dx < 0:
+            self.player.action = 3
+        elif dx > 0:
+            self.player.action = 4
+        elif ddx > 0:
+            if dy != 0:
+                self.player.action = 3
+            else:
+                self.player.action = 5
+        elif ddx == 0:
+            if self.player.dir < 0:
+                self.player.action = 5
+            else:
+                self.player.action = 6
+        else:
+            if dy != 0:
+                self.player.action = 4
+            else:
+                self.player.action = 6

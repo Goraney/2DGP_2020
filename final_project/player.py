@@ -26,7 +26,15 @@ class Player:
         self.image_idle = gfw.image.load('res/char_01.png')
         self.image_attack = gfw.image.load('res/char_01_atk.png')
         self.image_die = gfw.image.load('res/char_01_die.png')
-        self.image_skill = gfw.image.load('res/char_01_skill.png')
+        self.image_skill_1_R = gfw.image.load('res/char_01_skill_1.png')
+        self.image_skill_1_L = gfw.image.load('res/char_01_skill_1_L.png')
+        self.image_skill_2_1_R = gfw.image.load('res/char_01_skill_2-1.png')
+        self.image_skill_2_1_L = gfw.image.load('res/char_01_skill_2-1_L.png')
+        self.image_skill_2_2_R = gfw.image.load('res/char_01_skill_2-2.png')
+        self.image_skill_2_2_L = gfw.image.load('res/char_01_skill_2-2_L.png')
+        self.image_skill_3_R = gfw.image.load('res/char_01_skill_3.png')
+        self.image_skill_3_L = gfw.image.load('res/char_01_skill_3_L.png')
+        self.skill_num = 0 #스킬번호
         self.speed_move = 100 #이동속도
         self.speed_atk = 10 #공격속도
         self.power = 10 #공격력
@@ -158,8 +166,13 @@ class IdleState:
         elif pair == Player.KEYDOWN_z:
             self.player.set_state(DashState)
         elif pair in Player.KEY_SKILL_MAP:
+            if pair == (SDL_KEYDOWN, SDLK_a):
+                self.player.skill_num = 1
+            elif pair == (SDL_KEYDOWN, SDLK_s):
+                self.player.skill_num = 2
+            elif pair == (SDL_KEYDOWN, SDLK_d):
+                self.player.skill_num = 3
             self.player.set_state(SkillState)
-
 
 class AttackState:
     @staticmethod
@@ -366,19 +379,71 @@ class SkillState:
         return SkillState.singleton
 
     def __init__(self):
-        self.image_attack = gfw.image.load('res/char_01_skill.png')
+        self.image_skill_1_R = gfw.image.load('res/char_01_skill_1.png')
+        self.image_skill_1_L = gfw.image.load('res/char_01_skill_1_L.png')
+        self.image_skill_2_1_R = gfw.image.load('res/char_01_skill_2-1.png')
+        self.image_skill_2_1_L = gfw.image.load('res/char_01_skill_2-1_L.png')
+        self.image_skill_2_2_R = gfw.image.load('res/char_01_skill_2-2.png')
+        self.image_skill_2_2_L = gfw.image.load('res/char_01_skill_2-2_L.png')
+        self.image_skill_3_R = gfw.image.load('res/char_01_skill_3.png')
+        self.image_skill_3_L = gfw.image.load('res/char_01_skill_3_L.png')
 
     def enter(self):
-        pass
+        self.time = 0
+        self.fidx = 0
 
     def exit(self):
         pass
 
     def draw(self):
-        pass
+        if self.player.skill_num == 1:
+            x = self.fidx * 256
+        else:
+            x = self.fidx * 288
+        y = 0
+
+        if self.player.skill_num == 1:
+            if self.player.dir < 0:
+                self.image_skill_1_L.clip_draw(x, y, 256, 192, *self.player.pos)
+            else:
+                self.image_skill_1_R.clip_draw(x, y, 256, 192, *self.player.pos)
+        elif self.player.skill_num == 2:
+            if self.player.dir < 0:
+                if self.fidx < 6:
+                    self.image_skill_2_1_L.clip_draw(x, y, 288, 192, *self.player.pos)
+                elif self.fidx == 6:
+                    self.fidx -= 6
+                    self.image_skill_2_2_L.clip_draw(x, y, 288, 192, *self.player.pos)
+                else:
+                    self.image_skill_2_2_L.clip_draw(x, y, 288, 192, *self.player.pos)
+            else:
+                if self.fidx < 6:
+                    self.image_skill_2_1_R.clip_draw(x, y, 288, 192, *self.player.pos)
+                elif self.fidx == 6:
+                    self.fidx -= 6
+                    self.image_skill_2_2_R.clip_draw(x, y, 288, 192, *self.player.pos)
+                else:
+                    self.image_skill_2_2_R.clip_draw(x, y, 288, 192, *self.player.pos)
+        elif self.player.skill_num == 3:
+            if self.player.dir < 0:
+                self.image_skill_3_L.clip_draw(x, y, 288, 192, *self.player.pos)
+            else:
+                self.image_skill_3_R.clip_draw(x, y, 288, 192, *self.player.pos)
 
     def update(self):
-        pass
+        self.time += gfw.delta_time
+        frame = self.time * 10
+        if self.player.skill_num == 1:
+            frame_limit = 30
+        elif self.player.skill_num == 2:
+            frame_limit = 23
+        elif self.player.skill_num == 3:
+            frame_limit = 13
+
+        if frame < frame_limit:
+            self.fidx = int(frame)
+        else:
+            self.player.set_state(IdleState)
 
     def updateDelta(self, ddx, ddy):
         dx, dy = self.player.delta
@@ -424,3 +489,8 @@ class SkillState:
                 self.player.action = 4
             else:
                 self.player.action = 6
+
+    def handle_event(self, e):
+        pair = (e.type, e.key)
+        if pair in Player.KEY_MAP:
+            self.player.updateDelta(*Player.KEY_MAP[pair])

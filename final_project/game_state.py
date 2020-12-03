@@ -1,6 +1,7 @@
 from pico2d import *
 import gfw
 from player import Player
+import gobj
 
 canvas_width = 800
 canvas_height = 600

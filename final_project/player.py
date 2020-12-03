@@ -14,6 +14,7 @@ class Player:
     }
     KEYDOWN_z = (SDL_KEYDOWN, SDLK_z)
     KEYDOWN_x = (SDL_KEYDOWN, SDLK_x)
+    KEYDOWN_c = (SDL_KEYDOWN, SDLK_c)
     KEY_SKILL_MAP = {
         (SDL_KEYDOWN, SDLK_a),
         (SDL_KEYDOWN, SDLK_s),
@@ -165,6 +166,8 @@ class IdleState:
             self.player.set_state(AttackState)
         elif pair == Player.KEYDOWN_z:
             self.player.set_state(DashState)
+        elif pair == Player.KEYDOWN_c:
+            self.player.action = 0
         elif pair in Player.KEY_SKILL_MAP:
             if pair == (SDL_KEYDOWN, SDLK_a):
                 self.player.skill_num = 1

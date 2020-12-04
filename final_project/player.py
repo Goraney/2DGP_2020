@@ -1,5 +1,6 @@
 from pico2d import *
 import gfw
+import gobj
 
 class Player:
     KEY_MAP = {

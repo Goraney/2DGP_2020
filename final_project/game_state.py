@@ -2,12 +2,13 @@ from pico2d import *
 import gfw
 from player import Player
 import gobj
+from enemy import Enemy
 
 canvas_width = 800
 canvas_height = 600
 
 def enter():
-    gfw.world.init(['player'])
+    gfw.world.init(['enemy', 'player'])
 
     global player
     player = Player()
@@ -18,9 +19,11 @@ def exit():
 
 def update():
     gfw.world.update()
+    #enemy_gen.update()
 
 def draw():
     gfw.world.draw()
+    #gobj.draw_collision_box()
 
 def handle_event(e):
     if e.type == SDL_QUIT:

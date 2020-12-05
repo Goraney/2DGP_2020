@@ -40,6 +40,8 @@ class Player:
         self.speed_move = 100 #이동속도
         self.speed_atk = 10 #공격속도
         self.power = 10 #공격력
+        self.max_hp = 100
+        self.hp = self.max_hp
         self.time = 0
         self.fidx = 0
         self.action = 6
@@ -69,7 +71,7 @@ class Player:
         self.state.updateAction(dx, ddx, dy)
 
     def get_bb(self):
-        self.state.get_bb()
+        return self.state.get_bb()
 
     def handle_event(self, e):
         self.state.handle_event(e)
@@ -111,7 +113,6 @@ class IdleState:
         x, y = self.player.pos
         x += dx * self.player.speed_move * gfw.delta_time
         y += dy * self.player.speed_move * gfw.delta_time
-
         self.player.pos = x, y
 
         frame = self.time * 8#(self.player.speed_move * 0.1)
@@ -161,6 +162,10 @@ class IdleState:
                 self.player.action = 4
             else:
                 self.player.action = 6
+
+    def get_bb(self):
+        x, y = self.player.pos
+        return x - 32 + 16, y - 32 + 0, x + 32 - 16, y + 32 - 12
 
     def handle_event(self, e):
         pair = (e.type, e.key)
@@ -371,6 +376,10 @@ class DashState:
                 self.player.action = 4
             else:
                 self.player.action = 6
+
+    def get_bb(self):
+        x, y = self.player.pos
+        return x - 32 + 8, y - 32 + 4, x + 32 - 8, y + 32 - 4
 
     def handle_event(self, e):
         pair = (e.type, e.key)

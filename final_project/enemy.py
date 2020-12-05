@@ -6,7 +6,7 @@ import random
 class Enemy:
     SIZE = 64
     def __init__(self):
-        self.pos = self.x, self.y = random.randint(0, 700), random.randint(0, 500)
+        self.pos = random.randint(0, 700), random.randint(0, 500)
         self.dx, self.dy = 0, 0
         self.max_life = 100
         self.life = self.max_life
@@ -58,4 +58,12 @@ class Enemy:
 
     def get_bb(self):
         half = Enemy.SIZE // 2
-        return self.x - half, self.y - half, self.x + half, self.y + half
+        x, y = self.pos
+        if self.type == 0:
+            return x - half + 16, y - half + 16, x + half - 16, y + half - 16
+        elif self.type == 1:
+            return x - half + 16, y - half + 4, x + half - 16, y + half - 4
+        elif self.type == 2:
+            return x - half + 16, y - half + 0, x + half - 16, y + half - 4
+        elif self.type == 3:
+            return x - half + 12, y - half + 16, x + half - 12, y + half - 16

@@ -20,7 +20,11 @@ def exit():
     pass
 
 def check_enemy(e):
-    pass
+    if gobj.collides_box(player, e):
+        #print('Player Collision', e)
+        #e.remove()
+        print("collide")
+        return
 
 def update():
     gfw.world.update()
@@ -31,7 +35,7 @@ def update():
 
 def draw():
     gfw.world.draw()
-    #gobj.draw_collision_box()
+    gobj.draw_collision_box()
 
 def handle_event(e):
     if e.type == SDL_QUIT:

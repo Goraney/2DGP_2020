@@ -37,9 +37,9 @@ def pt_in_rect(point, rect):
     return True
 
 def draw_collision_box():
-    for object in gfw.world.all_objects():
-        if hasattr(object, 'get_bb'):
-            draw_rectangle(*object.get_bb())
+    for obj in gfw.world.all_objects():
+        if hasattr(obj, 'get_bb'):
+            draw_rectangle(*obj.get_bb())
 
 if __name__ == "__main__":
     print("This file is not supposed to be executed directly.")

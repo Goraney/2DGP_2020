@@ -17,9 +17,15 @@ def enter():
 def exit():
     pass
 
+def check_enemy(e):
+    pass
+
 def update():
     gfw.world.update()
     #enemy_gen.update()
+
+    #for e in gfw.world.objects_at(gfw.layer.enemy):
+        #check_enemy(e)
 
 def draw():
     gfw.world.draw()

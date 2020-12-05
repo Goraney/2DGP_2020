@@ -68,6 +68,9 @@ class Player:
     def updateAction(self, dx, ddx, dy):
         self.state.updateAction(dx, ddx, dy)
 
+    def get_bb(self):
+        self.state.get_bb()
+
     def handle_event(self, e):
         self.state.handle_event(e)
 

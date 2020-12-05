@@ -3,6 +3,8 @@ import gfw
 from player import Player
 import gobj
 from enemy import Enemy
+import enemy_gen
+
 
 canvas_width = 800
 canvas_height = 600
@@ -22,10 +24,10 @@ def check_enemy(e):
 
 def update():
     gfw.world.update()
-    #enemy_gen.update()
+    enemy_gen.update()
 
-    #for e in gfw.world.objects_at(gfw.layer.enemy):
-        #check_enemy(e)
+    for e in gfw.world.objects_at(gfw.layer.enemy):
+        check_enemy(e)
 
 def draw():
     gfw.world.draw()

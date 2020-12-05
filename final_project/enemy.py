@@ -6,7 +6,7 @@ import random
 class Enemy:
     SIZE = 64
     def __init__(self):
-        self.pos = self.x, self.y = 200, 200 #수정하자
+        self.pos = self.x, self.y = random.randint(0, 700), random.randint(0, 500)
         self.dx, self.dy = 0, 0
         self.max_life = 100
         self.life = self.max_life
@@ -52,6 +52,9 @@ class Enemy:
         elif self.fidx % 7 == 4:
             self.reset = True
             self.dx, self.dy = 0, 0
+
+    def remove(self):
+        gfw.world.remove(self)
 
     def get_bb(self):
         half = Enemy.SIZE // 2

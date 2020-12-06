@@ -526,6 +526,7 @@ class SkillState:
                 self.image_skill_3_R.clip_draw(x, y, 288, 192, *self.player.pos)
 
     def update(self):
+        global attack_delay
         self.time += gfw.delta_time
         frame = self.time * 10
         if self.player.skill_num == 1:
@@ -535,9 +536,12 @@ class SkillState:
         elif self.player.skill_num == 3:
             frame_limit = 13
 
+        self.skill_hit()
+
         if frame < frame_limit:
             self.fidx = int(frame)
         else:
+            attack_delay = True
             self.player.set_state(IdleState)
 
     def updateDelta(self, ddx, ddy):
@@ -597,6 +601,40 @@ class SkillState:
 
     def decrease_life(self):
         pass
+
+    def skill_hit(self):
+        global attack_delay
+        if attack_delay == True:
+            for e in gfw.world.objects_at(gfw.layer.enemy):
+                if gobj.collides_box(self, e):
+                    if self.player.skill_num == 1:
+                        if self.fidx == 20 or self.fidx == 26:
+                            e.life -= round((self.player.power * 1.2) + (self.fidx * 0.7))
+                            print("스킬1", round((self.player.power * 1.2) + (self.fidx * 0.7)))
+                            attack_delay = False
+                    elif self.player.skill_num == 2:
+                        hit_frame = [10, 12, 14, 16, 19, 20, 22, 25]
+                        for i in hit_frame:
+                            if self.fidx == i:
+                                e.life -= self.player.power * 0.04 + self.fidx * 0.04
+                                print("스킬2", self.player.power * 0.04 + self.fidx * 0.04)
+                                #attack_delay = False
+
+                    elif self.player.skill_num == 3:
+                        if self.fidx == 10:
+                            e.life -= round(self.player.power + self.fidx)
+                            self.player.life += round(self.player.power * 0.5)
+                            print("스킬3-1", round(self.player.power + self.fidx))
+                            print("스킬3-2", round(self.player.power * 0.5), " 회복")
+
+                            attack_delay = False
+        else:
+            for e in gfw.world.objects_at(gfw.layer.enemy):
+                if gobj.collides_box(self, e):
+                    if self.player.skill_num == 1:
+                        if self.fidx == 25:
+                            attack_delay = True
+
 
     def handle_event(self, e):
         pair = (e.type, e.key)

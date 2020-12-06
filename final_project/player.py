@@ -2,6 +2,8 @@ from pico2d import *
 import gfw
 import gobj
 
+attack_delay = True
+
 class Player:
     KEY_MAP = {
         (SDL_KEYDOWN, SDLK_LEFT):   (-1,  0),
@@ -37,10 +39,12 @@ class Player:
         self.image_skill_3_R = gfw.image.load('res/char_01_skill_3.png')
         self.image_skill_3_L = gfw.image.load('res/char_01_skill_3_L.png')
         self.skill_num = 0 #스킬번호
-        self.speed_move = 100 #이동속도
-        self.speed_atk = 10 #공격속도
-        self.power = 100 #공격력
-        self.max_life = 100
+        self.stats_0, self.stats_1, self.stats_2, self.stats_3 = 0, 0, 0, 0
+        self.max_stats = 100
+        self.power = 10 #공격력
+        self.speed_atk = 10  # 공격속도
+        self.max_life = 50 #최대체력
+        self.speed_move = 100  # 이동속도
         self.life = self.max_life
         self.time = 0
         self.fidx = 0
@@ -51,6 +55,7 @@ class Player:
         self.delta = 0, 0
         self.state = None
         self.set_state(IdleState)
+        self.state_num = 0
 
     def set_state(self, clazz):
         if self.state != None:
@@ -62,6 +67,24 @@ class Player:
         self.state.draw()
 
     def update(self):
+        self.power = 10 + (self.stats_0 // 5)  # 공격력
+        self.speed_atk = 10 + (self.stats_1 // 10)  # 공격속도
+        self.max_life = 50 + (self.stats_2 // 2)  # 최대체력
+        self.speed_move = 100 + (self.stats_3)  # 이동속도
+
+        if self.stats_0 > self.max_stats:
+            self.stats_0 = self.max_stats
+        if self.stats_1 > self.max_stats:
+            self.stats_1 = self.max_stats
+        if self.stats_2 > self.max_stats:
+            self.stats_2 = self.max_stats
+        if self.stats_3 > self.max_stats:
+            self.stats_3 = self.max_stats
+        if self.life > self.max_life:
+            self.life = self.max_life
+
+        #print("points = ", self.stats_0, self.stats_1, self.stats_2, self.stats_3)
+        #print("s_a, s, p, l = ", self.speed_atk, self.speed_move, self.power, self.max_life)
         self.state.update()
 
     def updateDelta(self, ddx, ddy):
@@ -97,6 +120,7 @@ class IdleState:
     def enter(self):
         self.time = 0
         self.fidx = 0
+        self.player.state_num = 0
 
     def exit(self):
         pass
@@ -216,6 +240,7 @@ class AttackState:
         self.time = 0
         self.fidx = 0
         self.comboswitch = 0
+        self.player.state_num = 1
 
         if self.player.dir < 0:
             self.player.action_atk = 3
@@ -233,6 +258,7 @@ class AttackState:
         self.image_attack.clip_draw(x, y, 128, 128, *self.player.pos)
 
     def update(self):
+        global attack_delay
         self.time += gfw.delta_time
         frame = self.time * self.player.speed_atk
         move_speed = max(0, 25 - (frame ** 2))
@@ -244,14 +270,28 @@ class AttackState:
 
         self.player.pos = x, y
 
+        if attack_delay == True and self.fidx == 2:
+            for e in gfw.world.objects_at(gfw.layer.enemy):
+                if gobj.collides_box(self, e):
+                    if self.player.action_atk < 4:
+                        atk = 3 - self.player.action_atk
+                    else:
+                        atk = 3 - (self.player.action_atk - 4)
+                    e.life -= round(self.player.power * (0.8 + (0.2 * atk)))
+                    attack_delay = False
+
         if frame < 6:
             self.fidx = int(frame)
         else:
             self.player.combo += 1
+            attack_delay = True
             if self.comboswitch == 0:
                 self.player.set_state(IdleState)
             else:
                 self.player.set_state(AttackState)
+
+        if self.player.life <= 0:
+            self.player.set_state(DieState)
 
     def updateDelta(self, ddx, ddy):
         dx, dy = self.player.delta
@@ -330,6 +370,7 @@ class DashState:
     def enter(self):
         self.time = 0
         self.fidx = 0
+        self.player.state_num = 2
 
     def exit(self):
         pass
@@ -360,6 +401,9 @@ class DashState:
             self.fidx = int(frame) % 8
         else:
             self.player.set_state(IdleState)
+
+        if self.player.life <= 0:
+            self.player.set_state(DieState)
 
     def updateDelta(self, ddx, ddy):
         dx, dy = self.player.delta
@@ -441,6 +485,7 @@ class SkillState:
     def enter(self):
         self.time = 0
         self.fidx = 0
+        self.player.state_num = 3
 
     def exit(self):
         pass
@@ -571,6 +616,7 @@ class DieState:
     def enter(self):
         self.time = 0
         self.fidx = 0
+        self.player.state_num = 4
 
     def exit(self):
         pass
@@ -587,7 +633,7 @@ class DieState:
 
     def update(self):
         self.time += gfw.delta_time
-        frame = self.time * 10
+        frame = self.time * 8
 
         x, y = self.player.pos
 

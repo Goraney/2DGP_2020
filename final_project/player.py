@@ -39,9 +39,9 @@ class Player:
         self.skill_num = 0 #스킬번호
         self.speed_move = 100 #이동속도
         self.speed_atk = 10 #공격속도
-        self.power = 10 #공격력
-        self.max_hp = 100
-        self.hp = self.max_hp
+        self.power = 100 #공격력
+        self.max_life = 100
+        self.life = self.max_life
         self.time = 0
         self.fidx = 0
         self.action = 6
@@ -72,6 +72,12 @@ class Player:
 
     def get_bb(self):
         return self.state.get_bb()
+
+    #def hit_timer(self):
+        #self.state.hit_timer()
+
+    def decrease_life(self):
+        self.state.decrease_life()
 
     def handle_event(self, e):
         self.state.handle_event(e)
@@ -117,6 +123,9 @@ class IdleState:
 
         frame = self.time * 8#(self.player.speed_move * 0.1)
         self.fidx = int(frame) % 8
+
+        if self.player.life <= 0:
+            self.player.set_state(DieState)
 
     def updateDelta(self, ddx, ddy):
         dx, dy = self.player.delta
@@ -165,7 +174,13 @@ class IdleState:
 
     def get_bb(self):
         x, y = self.player.pos
-        return x - 32 + 16, y - 32 + 0, x + 32 - 16, y + 32 - 12
+        return x - 32 + 16, y - 32 + 0, x + 32 - 16, y + 32 - 32
+
+    def decrease_life(self):
+        if self.player.life > 0:
+            self.player.life -= 10
+        else:
+            self.player.life = 0
 
     def handle_event(self, e):
         pair = (e.type, e.key)
@@ -282,6 +297,19 @@ class AttackState:
             else:
                 self.player.action = 6
 
+    def get_bb(self):
+        x, y = self.player.pos
+        if self.player.dir < 0:
+            return x - 32 + (-16), y - 32 + 0, x + 32 - 32, y + 32 - 16
+        else:
+            return x - 32 + 32, y - 32 + 0, x + 32 - (-16), y + 32 - 16
+
+    def decrease_life(self):
+        if self.player.life > 0:
+            self.player.life -= 10
+        else:
+            self.player.life = 0
+
     def handle_event(self,e):
         pair = (e.type, e.key)
         if pair in Player.KEY_MAP:
@@ -379,7 +407,13 @@ class DashState:
 
     def get_bb(self):
         x, y = self.player.pos
-        return x - 32 + 8, y - 32 + 4, x + 32 - 8, y + 32 - 4
+        return x - 32 + 16, y - 32 + 8, x + 32 - 16, y + 32 - 26
+
+    def decrease_life(self):
+        if self.player.life > 0:
+            self.player.life -= 10
+        else:
+            self.player.life = 0
 
     def handle_event(self, e):
         pair = (e.type, e.key)
@@ -506,7 +540,70 @@ class SkillState:
             else:
                 self.player.action = 6
 
+    def get_bb(self):
+        x, y = self.player.pos
+        if self.player.skill_num == 1:
+            if self.player.dir < 0:
+                return x - 155 + 32, y - 81 + 48, x + 155 - 155, y + 81 - 32
+            else:
+                return x - 155 + 155, y - 81 + 48, x + 155 - 32, y + 81 - 32
+        elif self.player.skill_num > 1:
+            return x - 155 + 16, y - 81 + 48, x + 155 - 16, y + 81 - 48
+
+    def decrease_life(self):
+        pass
+
     def handle_event(self, e):
         pair = (e.type, e.key)
         if pair in Player.KEY_MAP:
             self.player.updateDelta(*Player.KEY_MAP[pair])
+
+class DieState:
+    def get(player):
+        if not hasattr(DieState, 'singleton'):
+            DieState.singleton = DieState()
+            DieState.singleton.player = player
+        return DieState.singleton
+
+    def __init__(self):
+        self.image_die = gfw.image.load('res/char_01_die.png')
+
+    def enter(self):
+        self.time = 0
+        self.fidx = 0
+
+    def exit(self):
+        pass
+
+    def draw(self):
+        if self.player.dir == -1:
+            die_dir = 0
+        else:
+            die_dir = 1
+
+        x = self.fidx * 64
+        y = die_dir * 64
+        self.image_die.clip_draw(x, y, 64, 64, *self.player.pos)
+
+    def update(self):
+        self.time += gfw.delta_time
+        frame = self.time * 10
+
+        x, y = self.player.pos
+
+        self.player.pos = x, y
+
+        if frame < 24:
+            self.fidx = int(frame)
+        else:
+            gfw.world.remove(self.player)
+
+    def get_bb(self):
+        x, y = self.player.pos
+        return x - 32 + 16, y - 32 + 0, x + 32 - 32, y + 32 - 32
+
+    def handle_event(self, e):
+        pass
+
+    def decrease_life(self):
+        pass

@@ -59,7 +59,13 @@ def check_player(e):
                 player.decrease_life()
                 if player.state_num == 0:
                     if gobj.point_check(player.pos, e.pos):
-                        pass
+                        x,y = player.pos
+                        x -= (3 - 2 * count) ** 2
+                        player.pos = x, y
+                    else:
+                        x, y = player.pos
+                        x += (3 - 2 * count) ** 2
+                        player.pos = x, y
                 print("hp = ", player.life)
                 start_timer()
             elif player.state == 1 or player.state == 3: # 1:Attack, 3:Skill

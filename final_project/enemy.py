@@ -6,7 +6,7 @@ import random
 class Enemy:
     SIZE = 64
     def __init__(self):
-        self.pos = random.randint(0, 700), random.randint(0, 500)
+        self.pos = random.randint(100, 700), random.randint(100, 500)
         self.dx, self.dy = 0, 0
         self.max_life = 100
         self.life = self.max_life

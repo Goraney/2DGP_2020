@@ -5,9 +5,9 @@ import gobj
 from enemy import Enemy
 import enemy_gen
 
-
 canvas_width = 800
 canvas_height = 600
+timer_switch = True
 
 def enter():
     gfw.world.init(['enemy', 'player'])
@@ -27,8 +27,12 @@ def check_enemy(e):
         return
 
 def update():
+    global timer_switch
     gfw.world.update()
-    enemy_gen.update()
+    #enemy_gen.update()
+    if timer_switch == True:
+        enemy_gen.gen_timer()
+        timer_switch = False
 
     for e in gfw.world.objects_at(gfw.layer.enemy):
         check_enemy(e)

@@ -1,6 +1,6 @@
 from pico2d import *
 import gfw
-from player import Player
+from player import *
 import gobj
 from enemy import Enemy
 import enemy_gen
@@ -21,21 +21,40 @@ def exit():
 
 def check_enemy(e):
     if gobj.collides_box(player, e):
-        #print('Player Collision', e)
+        if player.state == AttackState:
+            Enemy.decrease_hp(e)
+        print('Player Collision', e)
         #e.remove()
-        print("collide")
         return
+
+    #if gobj.distance(player.pos, e.pos):
+        #print('Player Collision', e)
+        #return
+
+    #if e.life <= 0:
+        #x, y = e.pos
+        #e.remove()
+
+def check_player(e):
+    if gobj.collides_box(player, e):
+        if player.state != SkillState and player.state != DieState:
+            player.decrease_life()
+            return
 
 def update():
     global timer_switch
     gfw.world.update()
-    #enemy_gen.update()
     if timer_switch == True:
         enemy_gen.gen_timer()
         timer_switch = False
 
     for e in gfw.world.objects_at(gfw.layer.enemy):
-        check_enemy(e)
+        #check_enemy(e)
+        check_player(e)
+
+
+
+    print(player.life)
 
 def draw():
     gfw.world.draw()

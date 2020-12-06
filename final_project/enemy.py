@@ -2,6 +2,7 @@ from pico2d import *
 import gfw
 import gobj
 import random
+from player import *
 
 class Enemy:
     SIZE = 64
@@ -62,8 +63,12 @@ class Enemy:
         if self.type == 0:
             return x - half + 16, y - half + 16, x + half - 16, y + half - 16
         elif self.type == 1:
-            return x - half + 16, y - half + 4, x + half - 16, y + half - 4
+            return x - half + 16, y - half + 4, x + half - 16, y + half - 32
         elif self.type == 2:
-            return x - half + 16, y - half + 0, x + half - 16, y + half - 4
+            return x - half + 16, y - half + 0, x + half - 16, y + half - 32
         elif self.type == 3:
             return x - half + 12, y - half + 16, x + half - 12, y + half - 16
+
+    def decrease_hp(self):
+        for p in gfw.world.objects_at(gfw.layer.player):
+            self.life -= p.power

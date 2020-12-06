@@ -4,6 +4,8 @@ import gobj
 import random
 from player import *
 
+die_switch = False
+
 class Enemy:
     SIZE = 64
     def __init__(self):
@@ -12,7 +14,7 @@ class Enemy:
         self.max_life = 100
         self.life = self.max_life
         self.image = gfw.image.load('res/enemy_01.png')
-        self.image_die = gfw.image.load('res/enemy_01_die.png')
+
         self.type = random.randint(0, 3)
         self.reset = True
         self.move_speed = 0
@@ -34,7 +36,7 @@ class Enemy:
         y += self.dy * self.move_speed * gfw.delta_time
         self.pos = x, y
 
-        frame = self.time * 7
+        frame = self.time * 9
         self.fidx = int(frame) % 7
 
     def update_delta(self):
@@ -55,7 +57,12 @@ class Enemy:
             self.dx, self.dy = 0, 0
 
     def remove(self):
+        self.dead()
         gfw.world.remove(self)
+
+    def dead(self):
+        e = dead_Enemy(self.pos, self.type)
+        gfw.world.add(gfw.layer.dead_enemy, e)
 
     def get_bb(self):
         half = Enemy.SIZE // 2
@@ -69,6 +76,44 @@ class Enemy:
         elif self.type == 3:
             return x - half + 12, y - half + 16, x + half - 12, y + half - 16
 
-    def decrease_hp(self):
-        for p in gfw.world.objects_at(gfw.layer.player):
-            self.life -= p.power
+    #def decrease_life(self):
+        #for p in gfw.world.objects_at(gfw.layer.player):
+            #self.life -= p.power
+
+class dead_Enemy:
+    def __init__(self, pos, type):
+        self.pos = pos
+        self.type = type
+        self.time = 0
+        self.fidx = 0
+        self.image_die = gfw.image.load('res/enemy_01_die.png')
+
+    def draw(self):
+        x = self.fidx * 64
+        y = self.type * 64
+        self.image_die.clip_draw(x, y, 64, 64, *self.pos)
+
+    def update(self):
+        self.time += gfw.delta_time
+        frame = self.time * 8
+
+        x, y = self.pos
+
+        self.pos = x, y
+
+        if frame < 7:
+            self.fidx = int(frame)
+        else:
+            gfw.world.remove(self)
+
+    def get_bb(self):
+        half = Enemy.SIZE // 2
+        x, y = self.pos
+        if self.type == 0:
+            return x - half + 16, y - half + 16, x + half - 16, y + half - 16
+        elif self.type == 1:
+            return x - half + 16, y - half + 4, x + half - 16, y + half - 32
+        elif self.type == 2:
+            return x - half + 16, y - half + 0, x + half - 16, y + half - 32
+        elif self.type == 3:
+            return x - half + 12, y - half + 16, x + half - 12, y + half - 16

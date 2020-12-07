@@ -107,6 +107,14 @@ def handle_event(e):
     if e.type == SDL_KEYDOWN:
         if e.key == SDLK_ESCAPE:
             gfw.pop()
+        elif e.key == SDLK_1:
+            player.stats_0 += 5
+        elif e.key == SDLK_2:
+            player.stats_1 += 5
+        elif e.key == SDLK_3:
+            player.stats_2 += 5
+        elif e.key == SDLK_4:
+            player.stats_3 += 5
 
     player.handle_event(e)
 

@@ -285,7 +285,7 @@ class AttackState:
 
         dx, dy = self.player.delta
         x, y = self.player.pos
-        x += self.player.dir * (self.player.speed_move * (0.02 * move_speed)) * gfw.delta_time
+        x += self.player.dir * (self.player.speed_move * (0.01 * move_speed)) * gfw.delta_time
         y += dy * (self.player.speed_move * 0.2) * gfw.delta_time
         x = clamp(BOUNDARY_LEFT, x, BOUNDARY_RIGHT)
         y = clamp(BOUNDARY_DOWN, y, BOUNDARY_UP)

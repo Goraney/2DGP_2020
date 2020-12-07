@@ -14,5 +14,5 @@ def gen_timer():
     if gfw.world.count_at(gfw.layer.enemy) < MAX_ENEMY_COUNT:
         generate_enemy()
         generate_enemy()
-    timer = threading.Timer(3.3, gen_timer)
+    timer = threading.Timer(4.3, gen_timer)
     timer.start()

@@ -10,10 +10,11 @@ canvas_width = 800
 canvas_height = 600
 gen_timer_switch = True
 hit_timer_switch = True
+draw_box_switch = False
 count = 0
 
 def enter():
-    gfw.world.init(['dead_enemy', 'enemy', 'life_gauge', 'player'])
+    gfw.world.init(['dead_enemy', 'enemy', 'player'])
 
     global player
     player = Player()
@@ -24,29 +25,18 @@ def exit():
 
 def check_enemy(e):
     if gobj.collides_box(player, e):
-        #if player.state_num == 1:
-            #Enemy.decrease_life(e)
-        #print("e - ", e.life)
         if e.life <= 0:
             if e.type == 0:
-                player.stats_0 += 2
+                player.stats_0 += 4
             elif e.type == 1:
-                player.stats_1 += 2
+                player.stats_1 += 4
             elif e.type == 2:
-                player.stats_2 += 2
+                player.stats_2 += 4
+                player.life += 4
             elif e.type == 3:
-                player.stats_3 += 2
+                player.stats_3 += 4
             e.remove()
-        #e.remove()
         return
-
-    #if gobj.distance(player.pos, e.pos):
-        #print('Player Collision', e)
-        #return
-
-    #if e.life <= 0:
-        #x, y = e.pos
-        #e.remove()
 
 def check_player(e):
     global hit_timer_switch
@@ -94,14 +84,16 @@ def update():
         check_enemy(e)
         check_player(e)
 
-    #print(player.state)
-    #print(player.life)
-
 def draw():
+    global draw_box_switch
     gfw.world.draw()
-    gobj.draw_collision_box()
+
+    if draw_box_switch == True:
+        gobj.draw_collision_box()
 
 def handle_event(e):
+    global draw_box_switch
+
     if e.type == SDL_QUIT:
         gfw.quit()
     if e.type == SDL_KEYDOWN:
@@ -115,6 +107,11 @@ def handle_event(e):
             player.stats_2 += 5
         elif e.key == SDLK_4:
             player.stats_3 += 5
+        elif e.key == SDLK_0:
+            if draw_box_switch == False:
+                draw_box_switch = True
+            else:
+                draw_box_switch = False
 
     player.handle_event(e)
 

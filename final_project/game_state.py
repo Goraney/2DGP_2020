@@ -5,16 +5,18 @@ import gobj
 from enemy import Enemy
 import enemy_gen
 import threading
+import interface
 
 canvas_width = 800
 canvas_height = 600
 gen_timer_switch = True
 hit_timer_switch = True
 draw_box_switch = False
+draw_interface_switch = True
 count = 0
 
 def enter():
-    gfw.world.init(['dead_enemy', 'enemy', 'player'])
+    gfw.world.init(['bg', 'dead_enemy', 'enemy', 'player'])
 
     global player
     player = Player()
@@ -90,9 +92,12 @@ def draw():
 
     if draw_box_switch == True:
         gobj.draw_collision_box()
+    if draw_interface_switch == True:
+        interface.draw(player)
 
 def handle_event(e):
     global draw_box_switch
+    global draw_interface_switch
 
     if e.type == SDL_QUIT:
         gfw.quit()
@@ -112,6 +117,11 @@ def handle_event(e):
                 draw_box_switch = True
             else:
                 draw_box_switch = False
+        elif e.key == SDLK_i:
+            if draw_interface_switch == False:
+                draw_interface_switch = True
+            else:
+                draw_interface_switch = False
 
     player.handle_event(e)
 

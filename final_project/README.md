@@ -27,6 +27,8 @@
 최종발표 영상: https://youtu.be/6xkcYkBAkJI
 
 
++ only 게임 플레이 녹화 영상 (3분 이상)
+https://youtu.be/HhVlcleenWU
 
 # 2. Scene
 

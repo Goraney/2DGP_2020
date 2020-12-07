@@ -58,6 +58,12 @@ class Player:
         self.set_state(IdleState)
         self.state_num = 0
 
+        global BOUNDARY_LEFT, BOUNDARY_RIGHT, BOUNDARY_DOWN, BOUNDARY_UP
+        BOUNDARY_LEFT = 24
+        BOUNDARY_DOWN = 28
+        BOUNDARY_RIGHT = get_canvas_width() - BOUNDARY_LEFT
+        BOUNDARY_UP = get_canvas_height() - BOUNDARY_DOWN
+
     def set_state(self, clazz):
         if self.state != None:
             self.state.exit()
@@ -149,6 +155,8 @@ class IdleState:
         x, y = self.player.pos
         x += dx * self.player.speed_move * gfw.delta_time
         y += dy * self.player.speed_move * gfw.delta_time
+        x = clamp(BOUNDARY_LEFT, x, BOUNDARY_RIGHT)
+        y = clamp(BOUNDARY_DOWN, y, BOUNDARY_UP)
         self.player.pos = x, y
 
         frame = self.time * 8#(self.player.speed_move * 0.1)
@@ -279,6 +287,8 @@ class AttackState:
         x, y = self.player.pos
         x += self.player.dir * (self.player.speed_move * (0.02 * move_speed)) * gfw.delta_time
         y += dy * (self.player.speed_move * 0.2) * gfw.delta_time
+        x = clamp(BOUNDARY_LEFT, x, BOUNDARY_RIGHT)
+        y = clamp(BOUNDARY_DOWN, y, BOUNDARY_UP)
 
         self.player.pos = x, y
 
@@ -406,6 +416,8 @@ class DashState:
 
         x, y = self.player.pos
         x += self.player.dir * (self.player.speed_move * round(0.02 * dash_speed)) * gfw.delta_time
+        x = clamp(BOUNDARY_LEFT, x, BOUNDARY_RIGHT)
+        y = clamp(BOUNDARY_DOWN, y, BOUNDARY_UP)
 
         self.player.pos = x, y
 

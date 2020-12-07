@@ -41,6 +41,9 @@ class Enemy:
         y += self.dy * self.move_speed * gfw.delta_time
         self.pos = x, y
 
+        if not self.in_boundary():
+            gfw.world.remove(self)
+
         frame = self.time * 9
         self.fidx = int(frame) % 7
 
@@ -81,9 +84,13 @@ class Enemy:
         elif self.type == 3:
             return x - half + 12, y - half + 16, x + half - 12, y + half - 16
 
-    #def decrease_life(self):
-        #for p in gfw.world.objects_at(gfw.layer.player):
-            #self.life -= p.power
+    def in_boundary(self):
+        x,y = self.pos
+        if x < -32: return False
+        if y < -32: return False
+        if x > get_canvas_width() + 32: return False
+        if y > get_canvas_height() + 32: return False
+        return True
 
 class dead_Enemy:
     def __init__(self, pos, type):

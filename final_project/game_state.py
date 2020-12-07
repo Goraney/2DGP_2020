@@ -13,7 +13,7 @@ hit_timer_switch = True
 count = 0
 
 def enter():
-    gfw.world.init(['dead_enemy', 'enemy', 'player'])
+    gfw.world.init(['dead_enemy', 'enemy', 'life_gauge', 'player'])
 
     global player
     player = Player()

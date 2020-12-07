@@ -1,6 +1,7 @@
 from pico2d import *
 import gfw
 import gobj
+import life_gauge
 
 attack_delay = True
 
@@ -64,6 +65,11 @@ class Player:
         self.state.enter()
 
     def draw(self):
+        px, py = self.pos
+        gy = py - 64 // 2 - 8
+        rate = self.life / self.max_life
+        life_gauge.draw(px, gy, 64 - 16, rate)
+
         self.state.draw()
 
     def update(self):

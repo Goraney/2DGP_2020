@@ -3,6 +3,7 @@ import gfw
 import gobj
 import random
 from player import *
+import life_gauge
 
 die_switch = False
 
@@ -25,6 +26,10 @@ class Enemy:
         x = self.fidx * Enemy.SIZE
         y = self.type * Enemy.SIZE
         self.image.clip_draw(x, y, 64, 64, *self.pos)
+        px, py = self.pos
+        gy = py - Enemy.SIZE // 2 - 8
+        rate = self.life / self.max_life
+        life_gauge.draw(px, gy, Enemy.SIZE - 16, rate)
 
     def update(self):
         self.time += gfw.delta_time

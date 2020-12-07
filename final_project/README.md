@@ -14,6 +14,18 @@
 
 몬스터를 일정 수 처치하면 **더욱 강력한 몬스터**가 등장한다.
 
+캐릭터 공격/이동/스킬/피격/성장에 중점을 두고 구현한다.
+
+성장이 끝나도 계속 게임이 진행되므로 따로 게임 클리어는 없다.
+
+
+
+1차발표 영상:  https://youtu.be/-2pQT-8xQgk
+
+2차발표 영상: https://youtu.be/UZKn73ak-r8
+
+최종발표 영상: https://youtu.be/6xkcYkBAkJI
+
 
 
 # 2. Scene
@@ -21,6 +33,8 @@
 필요하다고 생각되는 Scene의 수는 **2~4개** 사이이다.
 
 게임이 진행되는 맵은 1개만으로 충분할 것이라 생각된다.
+
+~~그리고 정말 그렇게 됐다.~~
 
 
 
@@ -35,6 +49,8 @@ https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=shari
 ##### 1. 시작 화면
 
 > 게임 시작/ 조작법 버튼이 표시되는 시작 화면
+>
+> 비중 15%
 
 화면에 표시할 **객체**들
 
@@ -51,6 +67,8 @@ https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=shari
 ##### 2. 메인 화면
 
 > 캐릭터를 조작하고 몬스터가 생성되는 화면
+>
+> 비중 80%
 
 
 
@@ -105,6 +123,8 @@ https://drive.google.com/file/d/1gZMRHrkieIaKNtuvZjZHCkkhd7hTbSVN/view?usp=shari
 ##### 4. 게임 오버
 
 > 캐릭터가 사망하면 표시되는 화면
+>
+> 비중 5%
 
 화면에 표시할 **객체**들
 

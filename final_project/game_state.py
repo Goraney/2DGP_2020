@@ -14,6 +14,7 @@ gen_timer_switch = True
 hit_timer_switch = True
 draw_box_switch = False
 draw_interface_switch = True
+music_switch = True
 count = 0
 
 def enter():
@@ -26,6 +27,10 @@ def enter():
     bg = background.Background('res/background_white.png')
     gfw.world.add(gfw.layer.bg, bg)
 
+    global music_bg, sound_char_hit, sound_monster_hit, sound_monster_dead
+    music_bg = load_music('res/Mega Man X Legacy Collection Soundtrack - 11 X4 BOSS.mp3')
+    music_bg.repeat_play()
+
 def exit():
     pass
 
@@ -35,12 +40,12 @@ def check_enemy(e):
             if e.type == 0:
                 player.stats_0 += 4
             elif e.type == 1:
-                player.stats_1 += 4
+                player.stats_1 += 5
             elif e.type == 2:
-                player.stats_2 += 4
+                player.stats_2 += 2
                 player.life += 4
             elif e.type == 3:
-                player.stats_3 += 4
+                player.stats_3 += 8
             e.remove()
         return
 
@@ -103,6 +108,8 @@ def draw():
 def handle_event(e):
     global draw_box_switch
     global draw_interface_switch
+    global music_switch
+    global music_bg
 
     if e.type == SDL_QUIT:
         gfw.quit()
@@ -127,6 +134,17 @@ def handle_event(e):
                 draw_interface_switch = True
             else:
                 draw_interface_switch = False
+        elif e.key == SDLK_m:
+            if music_switch == False:
+                music_switch = True
+                music_bg.pause()
+                music_bg = load_music('res/Mega Man X Legacy Collection Soundtrack - 11 X4 BOSS.mp3')
+                music_bg.repeat_play()
+            else:
+                music_switch = False
+                music_bg.pause()
+                music_bg = load_music('res/Mirage Saloon REMIX.mp3')
+                music_bg.repeat_play()
 
     player.handle_event(e)
 

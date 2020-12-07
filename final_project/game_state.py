@@ -6,6 +6,7 @@ from enemy import Enemy
 import enemy_gen
 import threading
 import interface
+import background
 
 canvas_width = 800
 canvas_height = 600
@@ -21,6 +22,9 @@ def enter():
     global player
     player = Player()
     gfw.world.add(gfw.layer.player, player)
+
+    bg = background.Background('res/background_white.png')
+    gfw.world.add(gfw.layer.bg, bg)
 
 def exit():
     pass
@@ -43,6 +47,7 @@ def check_enemy(e):
 def check_player(e):
     global hit_timer_switch
     global count
+
     if hit_timer_switch == True:
         if gobj.collides_box(player, e):
             if player.state_num == 0 or player.state == 2: # 0:Idle, 2:Dash
@@ -58,7 +63,7 @@ def check_player(e):
                         x, y = player.pos
                         x += (3 - 2 * count) ** 2
                         player.pos = x, y
-                print("hp = ", player.life)
+                #print("hp = ", player.life)
                 start_timer()
             elif player.state == 1 or player.state == 3: # 1:Attack, 3:Skill
                 pass

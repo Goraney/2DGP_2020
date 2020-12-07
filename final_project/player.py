@@ -213,17 +213,23 @@ class IdleState:
         elif pair == Player.KEYDOWN_x:
             self.player.set_state(AttackState)
         elif pair == Player.KEYDOWN_z:
-            self.player.set_state(DashState)
+            if (self.player.stats_3 > 50): # 이동속도 스탯이 50 이상이면
+                self.player.set_state(DashState)
         elif pair == Player.KEYDOWN_c:
             self.player.action = 0
         elif pair in Player.KEY_SKILL_MAP:
             if pair == (SDL_KEYDOWN, SDLK_a):
-                self.player.skill_num = 1
+                if (self.player.stats_0 > 50): # 공격력 스탯이 50 이상이면
+                    self.player.skill_num = 1
+                    self.player.set_state(SkillState)
             elif pair == (SDL_KEYDOWN, SDLK_s):
-                self.player.skill_num = 2
+                if (self.player.stats_1 > 50): # 공격속도 스탯이 50 이상이면
+                    self.player.skill_num = 2
+                    self.player.set_state(SkillState)
             elif pair == (SDL_KEYDOWN, SDLK_d):
-                self.player.skill_num = 3
-            self.player.set_state(SkillState)
+                if (self.player.stats_2 > 50): # 최대체력 스탯이 50 이상이면
+                    self.player.skill_num = 3
+                    self.player.set_state(SkillState)
 
 class AttackState:
     @staticmethod

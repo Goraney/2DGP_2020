@@ -36,8 +36,6 @@ https://youtu.be/HhVlcleenWU
 
 ![](https://github.com/Goraney/2DGP_2020/blob/master/final_project/img_readme/commit.PNG)
 
-https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=sharing
-
 
 
 # 2. Scene

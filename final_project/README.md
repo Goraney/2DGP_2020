@@ -53,11 +53,7 @@ https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=shari
 게임시작 -> 메인화면 -> 게임오버/클리어 화면
 
 
-
-![](https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=sharing)
-
-https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=sharing
-
+![](https://github.com/Goraney/2DGP_2020/blob/master/final_project/img_readme/flow.PNG)
 
 
 ##### 1. 시작 화면
@@ -85,11 +81,7 @@ https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=shari
 > 비중 80%
 
 
-
-![](https://drive.google.com/file/d/1gZMRHrkieIaKNtuvZjZHCkkhd7hTbSVN/view?usp=sharing)
-
-https://drive.google.com/file/d/1gZMRHrkieIaKNtuvZjZHCkkhd7hTbSVN/view?usp=sharing
-
+![](https://github.com/Goraney/2DGP_2020/blob/master/final_project/img_readme/plan.PNG)
 
 
 화면에 표시할 **객체**들
@@ -118,6 +110,10 @@ https://drive.google.com/file/d/1gZMRHrkieIaKNtuvZjZHCkkhd7hTbSVN/view?usp=shari
 - 체력/공격력/공격속도 등 **스탯 수치** 관리
 - **스탯창** 표시
 - **애니메이션** 처리
+
+![](https://github.com/Goraney/2DGP_2020/blob/master/final_project/img_readme/control.PNG)
+![](https://github.com/Goraney/2DGP_2020/blob/master/final_project/img_readme/game-state.PNG)
+
 
 ##### 3. 히든 맵
 
@@ -157,7 +153,7 @@ https://drive.google.com/file/d/1gZMRHrkieIaKNtuvZjZHCkkhd7hTbSVN/view?usp=shari
 
 ~~다른 과목에서 배운 기술, 배울 것으로 기대되는 기술 등을 모두 포함한다.~~
 
-
+![](https://github.com/Goraney/2DGP_2020/blob/master/final_project/img_readme/making_plan.PNG)
 
 - 4방향 **이동**, 좌/우 방향으로 **공격/스킬** 시전
 
@@ -183,3 +179,9 @@ https://drive.google.com/file/d/1gZMRHrkieIaKNtuvZjZHCkkhd7hTbSVN/view?usp=shari
 - 강력한 몬스터
 - 히든 보스/ 히든 맵
 - 애니메이션 추가
+
+# 4. 결과
+
+![](https://github.com/Goraney/2DGP_2020/blob/master/final_project/img_readme/result.PNG)
+
+기본 구현사항 대부분 구현, 애니메이션 수작업 완료, 추가 구현사항은 일부 구현.

@@ -34,7 +34,7 @@ https://youtu.be/HhVlcleenWU
 
 커밋 횟수 56회
 
-![](https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=sharing)
+![](https://github.com/Goraney/2DGP_2020/blob/master/final_project/img_readme/commit.PNG)
 
 https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=sharing
 

@@ -28,6 +28,16 @@
 
 
 
+
+
+커밋 횟수 56회
+
+![](https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=sharing)
+
+https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=sharing
+
+
+
 # 2. Scene
 
 필요하다고 생각되는 Scene의 수는 **2~4개** 사이이다.
@@ -41,6 +51,8 @@
 게임시작 -> 메인화면 -> 게임오버/클리어 화면
 
 
+
+![](https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=sharing)
 
 https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=sharing
 
@@ -71,6 +83,8 @@ https://drive.google.com/file/d/1xfVvLbsfSWxV27D_vlJ2_hRTiwHCURjW/view?usp=shari
 > 비중 80%
 
 
+
+![](https://drive.google.com/file/d/1gZMRHrkieIaKNtuvZjZHCkkhd7hTbSVN/view?usp=sharing)
 
 https://drive.google.com/file/d/1gZMRHrkieIaKNtuvZjZHCkkhd7hTbSVN/view?usp=sharing
 
